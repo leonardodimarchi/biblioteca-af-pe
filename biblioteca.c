@@ -4,45 +4,7 @@
     Nome: Luiz Fernando Toquetto - RA: 200359
 */
 
-/*  1ª Etapa:
-
-    Arquivo e Cadastro de ALUNOS contendo uma estrutura com:
-    - nome
-    - RA
-    - quantidade de livros emprestados (Maximo 3)
-    - quantidade de livros reservados, ou seja, quando o livro 
-    voltar pra biblioteca, já esta reservado (Maximo 1)
-    - tabela 0, 1, 2, 3  -> Status e o numero de registro do livro 
-    1,2,3,4 (se for o caso)
-    - As tabelas devem ser struct
-    - as tabelas devem ser inicializadas com "L" de LIVRE
-
-    Consulta da Situação do alunos -> 2 tipos de consulta:
-    - TOTAL: mostrar o nome, RA e a quantidade de livros 
-    emprestados e reservados de geral.
-    -PARCIAL: Acesso pelo RA do aluno.
-
-
-    Arquivo e Cadastro de LIVROS contendo uma estrutura com:
-    - Numero do registro do LIVRO (Automatico)
-    - titulo
-    - autor
-    - status, RA do aluno (caso emprestado), data da retirada e 
-    data da devolução (7 dias depois da retirada).
-
-    Status: 
-    L -> Livre 
-    E -> Emprestado
-    R-> reservado (data da retirada 1 dia apos a devolução)
-    Status deve ser struct
-    Deve iniciar com L
-    Deve ter apenas 1 emprestimo e 1 reserva
-
-    Consulta de LIVROS:
-   - Total: Mostrar todos os livors (num registro, titulo autor e status).
-   - Parcial: Pelo titulo
-   - Parcial: Status
-*/
+// 1ª Etapa: Completa.
 
 //Bibliotecas
 #include<stdlib.h>
@@ -76,7 +38,7 @@ struct info_aluno{
 
 //Estrutura: Informações do livro.
 typedef struct livro{
-    int reg; // gerado automaticamente
+    int reg; // Gerado automaticamente
     char titulo[80];
     char autor[80];
     struct info_aluno status[2];
@@ -97,12 +59,12 @@ int verificar_qtd_alunos();
 //Funções livro.
 void aloca_livro(livro **p);
 void cadastro_livro(livro *p);
-int verificar_qtd_livros();
 void escrever_arquivo_livros(livro *p);
 void consulta_livro(livro *p, int opc);
 void printar_livro(livro *p);
 int buscar_status(livro *p, char status_colocado);
 int buscar_titulo(livro *p, char *titulo_colocado);
+int verificar_qtd_livros();
 
 //Main
 main(){
@@ -141,7 +103,9 @@ main(){
     }while(opc != 8);
 }
 
-//-------------------------------------------------------------inicio funcoes livros
+//---------INICIO -> FUNÇÕES LIVRO---------
+
+//Printar um livro.
 void printar_livro(livro *p){
     int f;
 
@@ -166,6 +130,7 @@ void printar_livro(livro *p){
     }
 }
 
+//Consulta de livros (Opc 5 - 6 - 7).
 void consulta_livro(livro *p, int opc){
     FILE *arquivo = NULL;
     int cc, posicao, qtdLivros = verificar_qtd_livros();
@@ -223,7 +188,7 @@ void consulta_livro(livro *p, int opc){
     }
 }
 
-//buscar titulo do livro
+//Buscar livro através do TITULO.
 int buscar_titulo(livro *p, char *titulo_colocado){
     FILE *arquivo = NULL;
     int cc, check = -1, qtd_livros = verificar_qtd_livros();
@@ -247,7 +212,7 @@ int buscar_titulo(livro *p, char *titulo_colocado){
     }
 }
 
-//buscar status do livro
+//Buscar livro através do STATUS.
 int buscar_status(livro *p, char status_colocado){
     FILE *arquivo = NULL;
     int cc, f, check = -1, qtd_livros = verificar_qtd_livros();
@@ -273,7 +238,7 @@ int buscar_status(livro *p, char status_colocado){
     }
 }
 
-//Alocacao dinamica do livro
+//Alocacao dinamica do livro.
 void aloca_livro(livro **p){
     if((*p = (livro*) realloc(*p,sizeof(livro))) == NULL){
         printf("\nErro na alocacao dinamica do livro\n\n");
@@ -281,6 +246,7 @@ void aloca_livro(livro **p){
     }
 }
 
+//Cadastro do livro.
 void cadastro_livro(livro *p){
     int f, num_reg_livro=(verificar_qtd_livros()+1000);
 
@@ -309,6 +275,7 @@ void cadastro_livro(livro *p){
     escrever_arquivo_livros(p);
 }
 
+//Escrever no arquivo de livros.
 void escrever_arquivo_livros(livro *p){
     FILE *arquivo = NULL;
 
@@ -322,6 +289,7 @@ void escrever_arquivo_livros(livro *p){
     fclose(arquivo);
 }
 
+//Verificar a quantidade de livros no arquivo.
 int verificar_qtd_livros(){
     FILE *arquivo = NULL;
     long int tamanho = 0;
@@ -338,9 +306,10 @@ int verificar_qtd_livros(){
         return tamanho;
     }
 }
-//-------------------------------------------------------------final funcoes livros
+//---------FIM -> FUNÇÕES LIVRO---------
 
-//-------------------------------------------------------------inicio funcoes alunos
+//---------INICIO -> FUNÇÕES ALUNO---------
+
 //Cadastro do aluno.
 void cadastro_aluno(aluno *p){
     int cc;
@@ -369,7 +338,7 @@ void cadastro_aluno(aluno *p){
     escrever_arquivo_aluno(p);
 }
 
-//Escrever no arquivo de alunos
+//Escrever no arquivo de alunos.
 void escrever_arquivo_aluno(aluno *p){
     FILE *arquivo = NULL;
 
@@ -428,7 +397,7 @@ void consulta_aluno(aluno *p, int opc){
     }
 }
 
-//Busca a posicao no arquivo atraves do RA
+//Busca a posicao no arquivo atraves do RA.
 int buscar_ra(aluno *p, char *ra_colocado){
     FILE *arquivo = NULL;
     int cc, check = -1, qtd_alunos = verificar_qtd_alunos();
@@ -497,9 +466,9 @@ void aloca_aluno(aluno **p){
         exit(1);
     }
 }
-//-------------------------------------------------------------final funcoes alunos
+//---------FIM -> FUNÇÕES ALUNO---------
 
-//-------------------------------------------------------------inicio funcoes padrao
+//---------INICIO -> FUNÇÕES PADRÃO---------
 //Printar o menu
 void printar_menu(){
     printf("\n<1> Cadastro do aluno");
@@ -524,4 +493,4 @@ void printar_menu(){
     
     printf("\nOpcao: ");
 }
-//-------------------------------------------------------------final funcoes padrao
+//---------FIM -> FUNÇÕES PADRÃO---------
