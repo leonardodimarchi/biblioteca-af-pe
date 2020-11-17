@@ -114,18 +114,26 @@ void printar_livro(livro *p){
     printf("\n\tAutor: %s\n",p->autor);
 
     for(f=0; f<2; f++){
-        printf("\n\tStatus: %i",f);
-        printf("\n\t\tSigla: %c",p->status[f].sigla);
-        printf("\n\t\tRA: %s",p->status[f].RA);
+        printf("\n\t%i\xA7 Status: ",f+1);
 
-        if(p->status[f].dia_ret == -1){
-            printf("\n\t\tRetirado: ---");
-            printf("\n\t\tDevolucao: ---");
+        if(p->status[f].sigla == 'L'){
+            printf("Disponivel");
         }else{
-            printf("\n\t\tRetirado: %i/%i",p->status[f].dia_ret,p->status[f].mes_ret);
-            printf("\n\t\tDevolucao: %i/%i",p->status[f].dia_dev,p->status[f].mes_dev);
-        }
+            if(p->status[f].sigla == 'E'){
+                printf("Emprestado");
+            }else{
+                printf("Reservado");
+            }
+            printf("\n\t\tRA: %s",p->status[f].RA);
 
+            if(p->status[f].dia_ret == -1){
+                printf("\n\t\tRetirado: ---");
+                printf("\n\t\tDevolucao: ---");
+            }else{
+                printf("\n\t\tRetirado: %i/%i",p->status[f].dia_ret,p->status[f].mes_ret);
+                printf("\n\t\tDevolucao: %i/%i",p->status[f].dia_dev,p->status[f].mes_dev);
+            }
+        }
     }
 
     printf("\n-------------------------------------------\n");
@@ -453,9 +461,7 @@ void printar_aluno(aluno *p){
     printf("\n\tQTD Reservado: %i",p->reservado);
 
     for(f = 0; f < 4; f++){
-        if(p->tabela[f].reg == -1){
-            printf("\n\tTabela %i: %c -- ---",f, p->tabela[f].sigla);
-        }else{
+        if(p->tabela[f].reg != -1){
             printf("\n\tTabela %i: %c -- %i",f,p->tabela[f].sigla, p->tabela[f].reg);
         }
     }
