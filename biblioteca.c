@@ -117,22 +117,22 @@ void printar_livro(livro *p){
     for(f=0; f<2; f++){
         printf("\n\t%i\xA7 Status: ",f+1);
 
-        if(p->status[f].sigla == 'L'){
+        if((p->status+f)->sigla == 'L'){
             printf("Disponivel");
         }else{
-            if(p->status[f].sigla == 'E'){
+            if((p->status+f)->sigla == 'E'){
                 printf("Emprestado");
             }else{
                 printf("Reservado");
             }
-            printf("\n\t\tRA: %s",p->status[f].RA);
+            printf("\n\t\tRA: %s",(p->status+f)->RA);
 
-            if(p->status[f].dia_ret == -1){
+            if((p->status+f)->dia_ret == -1){
                 printf("\n\t\tRetirado: ---");
                 printf("\n\t\tDevolucao: ---");
             }else{
-                printf("\n\t\tRetirado: %i/%i",p->status[f].dia_ret,p->status[f].mes_ret);
-                printf("\n\t\tDevolucao: %i/%i",p->status[f].dia_dev,p->status[f].mes_dev);
+                printf("\n\t\tRetirado: %i/%i",(p->status+f)->dia_ret,(p->status+f)->mes_ret);
+                printf("\n\t\tDevolucao: %i/%i",(p->status+f)->dia_dev,(p->status+f)->mes_dev);
             }
         }
     }
@@ -230,7 +230,7 @@ int buscar_status(livro *p, char status_colocado){
             fread(p,sizeof(livro),1,arquivo);
 
             for(f=0; f<2; f++){
-                if(p->status[f].sigla == toupper(status_colocado)){     
+                if((p->status+f)->sigla == toupper(status_colocado)){     
                     printar_livro(p);
                     check = 1;
                     break;
@@ -272,12 +272,12 @@ void cadastro_livro(livro *p){
     fflush(stdin);
 
     for(f=0; f<2; f++){
-        p->status[f].sigla='L';
-        strcpy(p->status[f].RA,"---");
-        p->status[f].mes_ret=-1;
-        p->status[f].mes_dev=-1;
-        p->status[f].dia_ret=-1;
-        p->status[f].dia_dev=-1;
+        (p->status+f)->sigla='L';
+        strcpy((p->status+f)->RA,"---");
+        (p->status+f)->mes_ret=-1;
+        (p->status+f)->mes_dev=-1;
+        (p->status+f)->dia_ret=-1;
+        (p->status+f)->dia_dev=-1;
     }
 
     printf("\n");
@@ -340,8 +340,8 @@ void cadastro_aluno(aluno *p){
     printf("\nQuantidade de livros reservados: %i\n\n",p->reservado);
 
     for(cc=0;cc<4;cc++){
-        p->tabela[cc].sigla = 'L';
-        p->tabela[cc].reg = -1;
+        (p->tabela+cc)->sigla = 'L';
+        (p->tabela+cc)->reg = -1;
     }   
     
     system("PAUSE");
@@ -462,8 +462,8 @@ void printar_aluno(aluno *p){
     printf("\n\tQTD Reservado: %i",p->reservado);
 
     for(f = 0; f < 4; f++){
-        if(p->tabela[f].reg != -1){
-            printf("\n\tTabela %i: %c -- %i",f,p->tabela[f].sigla, p->tabela[f].reg);
+        if((p->tabela+f)->reg != -1){
+            printf("\n\tTabela %i: %c -- %i",f,(p->tabela+f)->sigla, (p->tabela+f)->reg);
         }
     }
     
