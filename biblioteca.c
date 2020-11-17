@@ -4,7 +4,7 @@
     Nome: Luiz Fernando Toquetto - RA: 200359
 */
 
-// 1ª Etapa: Completa.
+// 1 - Etapa: Completa.
 
 //Bibliotecas
 #include<stdlib.h>
@@ -30,7 +30,7 @@ typedef struct aluno{
 struct info_aluno{
     char sigla;
     char RA[7];
-    int dia_ret; // Dia –> máx=31
+    int dia_ret; // Dia –> max=31
     int mes_ret; // Mes = fev = 28 dias
     int dia_dev; // Mes = abril || jun || set || nov = 30 dias
     int mes_dev; // O resto é = 31 dias
@@ -103,7 +103,7 @@ main(){
     }while(opc != 8);
 }
 
-//---------INICIO -> FUNÇÕES LIVRO---------
+//---------INICIO -> FUNCOES LIVRO---------
 
 //Printar um livro.
 void printar_livro(livro *p){
@@ -160,13 +160,8 @@ void consulta_livro(livro *p, int opc){
             scanf("%c",&statusAux);
             fflush(stdin);
 
-            posicao = buscar_status(p,statusAux);
+            buscar_status(p,statusAux);
 
-            if(posicao == -1){
-                printf("\nStatus Invalido\n");
-            }else{
-                printar_livro(p);
-            }
         }else if(opc == 7){ //busca pelo titulo
             printf("\nTitulo do livro para buscar: ");
             gets(tituloAux);
@@ -227,10 +222,16 @@ int buscar_status(livro *p, char status_colocado){
 
             for(f=0; f<2; f++){
                 if(p->status[f].sigla == status_colocado){
-                    check = cc;
-                    cc = qtd_livros;
+                    printar_livro(p);
+                    check = 1;
+                    break;
                 }
             }
+        }
+
+        if (check == -1){
+            printf("\nStatus invalido.\n");
+            system("PAUSE");
         }
 
         fclose(arquivo);
