@@ -125,6 +125,7 @@ void printar_livro(livro *p){
             }else{
                 printf("Reservado");
             }
+            
             printf("\n\t\tRA: %s",(p->status+f)->RA);
 
             if((p->status+f)->dia_ret == -1){
