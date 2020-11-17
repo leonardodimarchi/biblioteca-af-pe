@@ -505,4 +505,5 @@ void printar_menu(){
     
     printf("\nOpcao: ");
 }
+
 //---------FIM -> FUNCOES PADRÃO---------
