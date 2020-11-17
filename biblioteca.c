@@ -11,7 +11,7 @@
 #include<stdio.h>
 #include<string.h>
 
-//Estrutura: Informações do livro
+//Estrutura: Informacoes do livro
 struct info_livro{
     char sigla; // [L]ivre, [E]mprestado, [R]eservado
     int reg; // registro do livro
@@ -26,7 +26,7 @@ typedef struct aluno{
     struct info_livro tabela[4];
 }aluno;
 
-//Estrutura: Informações do aluno.
+//Estrutura: Informacoes do aluno.
 struct info_aluno{
     char sigla;
     char RA[7];
@@ -36,7 +36,7 @@ struct info_aluno{
     int mes_dev; // O resto é = 31 dias
 };
 
-//Estrutura: Informações do livro.
+//Estrutura: Informacoes do livro.
 typedef struct livro{
     int reg; // Gerado automaticamente
     char titulo[80];
@@ -44,10 +44,10 @@ typedef struct livro{
     struct info_aluno status[2];
 } livro;
 
-//Funções padrão.
+//Funcoes padrao.
 void printar_menu();
 
-//Funcões aluno.
+//Funcoes aluno.
 void aloca_aluno(aluno **p);
 void cadastro_aluno(aluno *p);
 void escrever_arquivo_aluno(aluno *p);
@@ -56,7 +56,7 @@ void printar_aluno(aluno *p);
 int buscar_ra(aluno *p, char *ra_colocado);
 int verificar_qtd_alunos();
 
-//Funções livro.
+//Funcoes livro.
 void aloca_livro(livro **p);
 void cadastro_livro(livro *p);
 void escrever_arquivo_livros(livro *p);
@@ -131,7 +131,7 @@ void printar_livro(livro *p){
     printf("\n-------------------------------------------\n");
 }
 
-//Consulta de livros (Opc 5 - 6 - 7).
+//Consulta de livros (Opc 5 - 6 - 7)
 void consulta_livro(livro *p, int opc){
     FILE *arquivo = NULL;
     int cc, posicao, qtdLivros = verificar_qtd_livros();
@@ -162,7 +162,7 @@ void consulta_livro(livro *p, int opc){
 
             buscar_status(p,statusAux);
 
-        }else if(opc == 7){ //busca pelo titulo
+        }else if(opc == 7){ //BUSCA PELO TITULO
             printf("\nTitulo do livro para buscar: ");
             gets(tituloAux);
             fflush(stdin);
@@ -183,7 +183,7 @@ void consulta_livro(livro *p, int opc){
     }
 }
 
-//Buscar livro através do TITULO.
+//Buscar livro atraves do TITULO.
 int buscar_titulo(livro *p, char *titulo_colocado){
     FILE *arquivo = NULL;
     int cc, check = -1, qtd_livros = verificar_qtd_livros();
@@ -207,7 +207,7 @@ int buscar_titulo(livro *p, char *titulo_colocado){
     }
 }
 
-//Buscar livro através do STATUS.
+//Buscar livro atraves do STATUS.
 int buscar_status(livro *p, char status_colocado){
     FILE *arquivo = NULL;
     int cc, f, check = -1, qtd_livros = verificar_qtd_livros();
@@ -308,9 +308,9 @@ int verificar_qtd_livros(){
         return tamanho;
     }
 }
-//---------FIM -> FUNÇÕES LIVRO---------
+//---------FIM -> FUNCOES LIVRO---------
 
-//---------INICIO -> FUNÇÕES ALUNO---------
+//---------INICIO -> FUNCOES ALUNO---------
 
 //Cadastro do aluno.
 void cadastro_aluno(aluno *p){
@@ -470,9 +470,10 @@ void aloca_aluno(aluno **p){
         exit(1);
     }
 }
-//---------FIM -> FUNÇÕES ALUNO---------
+//---------FIM -> FUNCOES ALUNO---------
 
-//---------INICIO -> FUNÇÕES PADRÃO---------
+//---------INICIO -> FUNCOES PADRÃO---------
+
 //Printar o menu
 void printar_menu(){
     printf("\n<1> Cadastro do aluno");
@@ -497,4 +498,4 @@ void printar_menu(){
     
     printf("\nOpcao: ");
 }
-//---------FIM -> FUNÇÕES PADRÃO---------
+//---------FIM -> FUNCOES PADRÃO---------
