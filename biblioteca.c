@@ -80,8 +80,8 @@ main(){
         system("cls");
 
         printar_menu();
-        scanf("%i",&opc);
 
+        scanf("%i",&opc);
         fflush(stdin);
 
         switch(opc){
@@ -149,7 +149,7 @@ void consulta_livro(livro *p, int opc){
     system("cls");
 
     if((arquivo = fopen("livros.bin","rb")) == NULL){
-        printf("\nFalha ao abrir o arquivo dos livros (Consulta).\n\n");
+        printf("\nFalha ao abrir o arquivo dos livros (Consulta).\n\t-> Possivelmente nao ha livros cadastrados!\n\n");
         system("PAUSE");
     }else{
 
@@ -179,7 +179,7 @@ void consulta_livro(livro *p, int opc){
             posicao = buscar_titulo(p,tituloAux);
 
             if(posicao == -1){
-                printf("\nTitulo Invalido\n");
+                printf("\nTitulo Invalido. Tente novamente!\n");
             }else{
                 printar_livro(p);
             }
@@ -239,8 +239,7 @@ int buscar_status(livro *p, char status_colocado){
         }
 
         if (check == -1){
-            printf("\nStatus invalido.\n");
-            system("PAUSE");
+            printf("\nRA Invalido. Tente novamente!\n");
         }
 
         fclose(arquivo);
@@ -336,14 +335,13 @@ void cadastro_aluno(aluno *p){
     p->emprestado = 0;
     p->reservado = 0;
 
-    printf("\nQuantidade de livros emprestados: %i",p->emprestado);
-    printf("\nQuantidade de livros reservados: %i\n\n",p->reservado);
-
     for(cc=0;cc<4;cc++){
         (p->tabela+cc)->sigla = 'L';
         (p->tabela+cc)->reg = -1;
     }   
     
+    printf("\n");
+
     system("PAUSE");
 
     escrever_arquivo_aluno(p);
@@ -372,7 +370,7 @@ void consulta_aluno(aluno *p, int opc){
     system("cls");
 
     if((arquivo = fopen("alunos.bin","rb")) == NULL){
-        printf("\nFalha ao abrir o arquivo dos alunos (Consulta).\n\n");
+        printf("\nFalha ao abrir o arquivo dos alunos (Consulta).\n\t-> Possivelmente nao ha alunos cadastrados!\n\n");
         system("PAUSE");
     }else{
 
@@ -396,8 +394,7 @@ void consulta_aluno(aluno *p, int opc){
             posicao_ra = buscar_ra(p, RA);
 
             if(posicao_ra == -1){
-                printf("\nRA Invalido\n");
-                system("PAUSE");
+                printf("\nRA Invalido. Tente novamente!\n");
             }else{
                 printar_aluno(p);
             }
@@ -458,8 +455,16 @@ void printar_aluno(aluno *p){
 
     printf("\n\tNome: %s ",p->nome);
     printf("\n\tRA: %s",p->RA);
-    printf("\n\tQTD Emprestado: %i",p->emprestado);
-    printf("\n\tQTD Reservado: %i",p->reservado);
+
+    //Printar os emprestimos e reservas apenas se forem > 0.
+    if(p->emprestado > 0){
+        printf("\n\tQTD Emprestado: %i",p->emprestado);
+    }
+    
+    if(p->reservado > 0){
+        printf("\n\tQTD Reservado: %i",p->reservado);
+    }
+    
 
     for(f = 0; f < 4; f++){
         if((p->tabela+f)->reg != -1){
