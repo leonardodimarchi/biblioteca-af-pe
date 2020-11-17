@@ -10,6 +10,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
+#include<ctype.h>
 
 //Estrutura: Informacoes do livro
 struct info_livro{
@@ -229,7 +230,7 @@ int buscar_status(livro *p, char status_colocado){
             fread(p,sizeof(livro),1,arquivo);
 
             for(f=0; f<2; f++){
-                if(p->status[f].sigla == status_colocado){
+                if(p->status[f].sigla == toupper(status_colocado)){     
                     printar_livro(p);
                     check = 1;
                     break;
