@@ -110,24 +110,25 @@ void printar_livro(livro *p){
     int f;
 
     printf("\nRegistro: %i",p->reg);
-    printf("\nTitulo: %s",p->titulo);
-    printf("\nAutor: %s\n",p->autor);
+    printf("\n\tTitulo: %s",p->titulo);
+    printf("\n\tAutor: %s\n",p->autor);
 
     for(f=0; f<2; f++){
-        printf("\nStatus: %i",f);
-        printf("\n\tSigla: %c",p->status[f].sigla);
-        printf("\n\tRA: %s",p->status[f].RA);
+        printf("\n\tStatus: %i",f);
+        printf("\n\t\tSigla: %c",p->status[f].sigla);
+        printf("\n\t\tRA: %s",p->status[f].RA);
 
         if(p->status[f].dia_ret == -1){
-            printf("\n\tRetirado: ---");
-            printf("\n\tDevolucao: ---");
+            printf("\n\t\tRetirado: ---");
+            printf("\n\t\tDevolucao: ---");
         }else{
-            printf("\n\tRetirado: %i/%i",p->status[f].dia_ret,p->status[f].mes_ret);
-            printf("\n\tDevolucao: %i/%i",p->status[f].dia_dev,p->status[f].mes_dev);
+            printf("\n\t\tRetirado: %i/%i",p->status[f].dia_ret,p->status[f].mes_ret);
+            printf("\n\t\tDevolucao: %i/%i",p->status[f].dia_dev,p->status[f].mes_dev);
         }
 
-        printf("\n");
     }
+
+    printf("\n-------------------------------------------\n");
 }
 
 //Consulta de livros (Opc 5 - 6 - 7).
@@ -145,6 +146,7 @@ void consulta_livro(livro *p, int opc){
 
         if(opc == 5){ //BUSCA TOTAL
             printf("\nLista de livros (Total)\n");
+            printf("-------------------------------------------\n");
 
             for(cc=0; cc < qtdLivros; cc++){
                 fseek(arquivo,cc*sizeof(livro),0);
@@ -162,7 +164,6 @@ void consulta_livro(livro *p, int opc){
 
             if(posicao == -1){
                 printf("\nStatus Invalido\n");
-                system("PAUSE");
             }else{
                 printar_livro(p);
             }
@@ -175,7 +176,6 @@ void consulta_livro(livro *p, int opc){
 
             if(posicao == -1){
                 printf("\nTitulo Invalido\n");
-                system("PAUSE");
             }else{
                 printar_livro(p);
             }
@@ -257,7 +257,7 @@ void cadastro_livro(livro *p){
     gets(p->titulo);
     fflush(stdin);
 
-    printf("\nInforme o nome do autor: ");
+    printf("Informe o nome do autor: ");
     gets(p->autor);
     fflush(stdin);
 
@@ -270,6 +270,7 @@ void cadastro_livro(livro *p){
         p->status[f].dia_dev=-1;
     }
 
+    printf("\n");
     system("PAUSE");
 
     escrever_arquivo_livros(p);
@@ -368,6 +369,8 @@ void consulta_aluno(aluno *p, int opc){
         if(opc == 3){ //BUSCA TOTAL
             printf("\nLista de alunos (Total)\n");
 
+            printf("-------------------------------------------\n");
+
             for(cc=0; cc < qtdAlunos; cc++){
                 fseek(arquivo,cc*sizeof(aluno),0);
                 fread(p,sizeof(aluno),1,arquivo);
@@ -456,7 +459,7 @@ void printar_aluno(aluno *p){
         }
     }
     
-    printf("\n");
+    printf("\n\n-------------------------------------------\n");
 }
 
 //Alocacao dinamica do aluno
