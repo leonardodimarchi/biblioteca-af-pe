@@ -1,10 +1,12 @@
 /*
+    CP116TIM2 - Programação Estruturada (Matutino)
+
     Nome: Joao Vitor Pires Pinto - RA: 200782
     Nome: Leonardo Dimarchi Souza da Cruz - RA: 200109
     Nome: Luiz Fernando Toquetto - RA: 200359
 */
 
-// 1 - Etapa: Completa.
+// 1 - Etapa (Cadastro e Gravação dos alunos e dos livros): Completa.
 
 //Bibliotecas
 #include<stdlib.h>
@@ -79,6 +81,7 @@ main(){
     do{
         system("cls");
 
+        //Menu
         printar_menu();
 
         scanf("%i",&opc);
@@ -240,7 +243,7 @@ int buscar_status(livro *p, char status_colocado){
         }
 
         if (check == -1){
-            printf("\nRA Invalido. Tente novamente!\n");
+            printf("\nStatus Invalido. Tente novamente!\n");
         }
 
         fclose(arquivo);
@@ -485,7 +488,7 @@ void aloca_aluno(aluno **p){
 }
 //---------FIM -> FUNCOES ALUNO---------
 
-//---------INICIO -> FUNCOES PADRÃO---------
+//---------INICIO -> FUNCOES PADRAO---------
 
 //Printar o menu
 void printar_menu(){
@@ -512,4 +515,4 @@ void printar_menu(){
     printf("\nOpcao: ");
 }
 
-//---------FIM -> FUNCOES PADRÃO---------
+//---------FIM -> FUNCOES PADRAO---------
