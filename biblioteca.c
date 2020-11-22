@@ -49,8 +49,8 @@ typedef struct livro{
 
 //Funcoes padrao.
 void emprestimo_reserva(aluno *pAluno, livro *pLivro);
+void efetivar_emprestimo_reserva( aluno *pAluno,livro *pLivro,int posicao_ra);
 void printar_menu();
-
 
 //Funcoes aluno.
 void aloca_aluno(aluno **p);
@@ -59,8 +59,9 @@ void escrever_arquivo_aluno(aluno *p);
 void consulta_aluno(aluno *p, int opc);
 void printar_aluno(aluno *p);
 int buscar_ra(aluno *p, char *ra_colocado);
+int atualizar_aluno(aluno *pAluno,int posicao_ra);
 int verificar_qtd_alunos();
-
+        
 //Funcoes livro.
 void aloca_livro(livro **p);
 void cadastro_livro(livro *p);
@@ -69,6 +70,7 @@ void consulta_livro(livro *p, int opc);
 void printar_livro(livro *p);
 int buscar_status(livro *p, char status_colocado);
 int buscar_titulo(livro *p, char *titulo_colocado);
+int atualizar_livro(livro *pTitulo,int posicao_titulo);
 int verificar_qtd_livros();
 
 
@@ -242,7 +244,7 @@ int buscar_status(livro *p, char status_colocado){
             for(f=0; f<2; f++){
                 if((p->status+f)->sigla == toupper(status_colocado)){     
                     printar_livro(p);
-                    check = 1;
+                    check = 1;   /// SUSPEEEEITO  --> CHECK = CC ?
                     break;
                 }
             }
@@ -326,6 +328,22 @@ int verificar_qtd_livros(){
         return tamanho;
     }
 }
+
+//Atualiza o arquivo de livros.
+int atualizar_livro(livro *pLivro,int posicao_titulo){
+    FILE *arquivo = NULL;
+
+    if((arquivo = fopen("livros.bin","rb+")) == NULL){
+        printf("\nFalha ao abrir o arquivo de livros (Atualizar o arquivo)\n\n");
+        system("PAUSE");
+    }else{
+        fseek(arquivo,posicao_titulo*sizeof(livro),0);
+        fwrite(pLivro,sizeof(livro),1,arquivo);
+    }
+
+    fclose(arquivo);
+}
+
 //---------FIM -> FUNCOES LIVRO---------
 
 //---------INICIO -> FUNCOES ALUNO---------
@@ -485,6 +503,21 @@ void printar_aluno(aluno *p){
     printf("\n\n-------------------------------------------\n");
 }
 
+//Atualiza o arquivo de alunos.
+int atualizar_aluno(aluno *pAluno,int posicao_ra){
+    FILE *arquivo = NULL;
+
+    if((arquivo = fopen("alunos.bin","rb+")) == NULL){
+        printf("\nFalha ao abrir o arquivo de alunos (Atualizar o arquivo)\n\n");
+        system("PAUSE");
+    }else{
+        fseek(arquivo,posicao_ra*sizeof(aluno),0);
+        fwrite(pAluno,sizeof(aluno),1,arquivo);
+    }
+    
+    fclose(arquivo);
+}
+
 //Alocacao dinamica do aluno
 void aloca_aluno(aluno **p){
     if((*p = (aluno*) realloc(*p,sizeof(aluno))) == NULL){
@@ -512,11 +545,34 @@ void emprestimo_reserva(aluno *pAluno, livro *pLivro){
         system("PAUSE");
     }else{
         if(pAluno->emprestado < 3 || pAluno->reservado < 1){
-            //Emprestar ou reservar livros.
+            efetivar_emprestimo_reserva(pAluno, pLivro, posicao_ra);
         }else{
             printf("\nO aluno ja esta com o limite de emprestimo e reservas.");
             system("PAUSE");
         }
+    }
+}
+
+//Fazer o emprestimo e reserva propriamente dito.
+void efetivar_emprestimo_reserva( aluno *pAluno,livro *pLivro,int posicao_ra){
+    char auxTitulo[80];
+    int posicao_titulo;
+
+    printf("\nQual o título do livro? ");
+    gets(auxTitulo);
+    fflush(stdin);
+
+    posicao_titulo = buscar_titulo(pLivro,auxTitulo);
+
+    if(posicao_titulo == -1){
+        printf("\nTitulo do livro invalido!\n");
+        system("PAUSE");
+    }else{
+
+        
+        
+        atualizar_titulo(pLivro, posicao_titulo);
+        atualizar_aluno(pAluno, posicao_ra);
     }
 }
 
