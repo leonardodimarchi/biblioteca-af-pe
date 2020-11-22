@@ -549,6 +549,8 @@ void emprestimo_reserva(aluno *pAluno, livro *pLivro){
     char auxRa[7];
     int posicao_ra;
 
+    system("cls");
+
     printf("\nRA do aluno: ");
     gets(auxRa);
     fflush(stdin);
@@ -593,12 +595,12 @@ void efetivar_emprestimo_reserva( aluno *pAluno,livro *pLivro,int posicao_ra){
             }else{
                 //Reserva
                 if((pLivro->status+cc)->sigla == 'E' && verificar_reservas(pLivro) == 1){
-                    alterar_status_emprestimo(pAluno, pLivro, 'R', cc);
+                    alterar_status_emprestimo(pAluno, pLivro, 'R', 1);
                     break;
                 }else if(verificar_reservas(pLivro) != 1){
                     printf("\nInfelizmente o livro ja esta reservado");
                     printf("\nRA de Emprestimo: %s",(pLivro->status+cc)->RA);
-                    printf("\nData devolucao: %i / %i",(pLivro->status+cc)->dia_dev,(pLivro->status+cc)->mes_dev);
+                    printf("\nData devolucao: %i/%i\n",(pLivro->status+cc)->dia_dev,(pLivro->status+cc)->mes_dev);
 
                     check = 1;
                     break;
