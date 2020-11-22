@@ -48,7 +48,9 @@ typedef struct livro{
 } livro;
 
 //Funcoes padrao.
+void emprestimo_reserva(aluno *pAluno, livro *pLivro);
 void printar_menu();
+
 
 //Funcoes aluno.
 void aloca_aluno(aluno **p);
@@ -68,6 +70,7 @@ void printar_livro(livro *p);
 int buscar_status(livro *p, char status_colocado);
 int buscar_titulo(livro *p, char *titulo_colocado);
 int verificar_qtd_livros();
+
 
 //Main
 main(){
@@ -103,8 +106,11 @@ main(){
             case 7:
                 consulta_livro(book,opc); 
                 break;
+            case 8:
+                emprestimo_reserva(estudante, book);
+                break;
         }
-    }while(opc != 8);
+    }while(opc != 9);
 }
 
 //---------INICIO -> FUNCOES LIVRO---------
@@ -490,6 +496,30 @@ void aloca_aluno(aluno **p){
 
 //---------INICIO -> FUNCOES PADRAO---------
 
+//Emprestimo e Reserva de livros
+void emprestimo_reserva(aluno *pAluno, livro *pLivro){
+    char auxRa[7];
+    int posicao_ra;
+
+    printf("\nRA do aluno: ");
+    gets(auxRa);
+    fflush(stdin);
+
+    posicao_ra = buscar_ra(pAluno,auxRa);
+
+    if(posicao_ra == -1){
+        printf("\nRA Invalido. Tente novamente!\n");
+        system("PAUSE");
+    }else{
+        if(pAluno->emprestado < 3 || pAluno->reservado < 1){
+            //Emprestar ou reservar livros.
+        }else{
+            printf("\nO aluno ja esta com o limite de emprestimo e reservas.");
+            system("PAUSE");
+        }
+    }
+}
+
 //Printar o menu
 void printar_menu(){
     printf("\n<1> Cadastro do aluno");
@@ -508,7 +538,11 @@ void printar_menu(){
 
     printf("\n--------------------");
 
-    printf("\n<8> Sair");
+    printf("\n<8> Emprestimo / Reserva");
+
+    printf("\n--------------------");
+
+    printf("\n<9> Sair");
 
     printf("\n--------------------");
     
