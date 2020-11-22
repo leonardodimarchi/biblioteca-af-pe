@@ -556,9 +556,9 @@ void emprestimo_reserva(aluno *pAluno, livro *pLivro){
 //Fazer o emprestimo e reserva propriamente dito.
 void efetivar_emprestimo_reserva( aluno *pAluno,livro *pLivro,int posicao_ra){
     char auxTitulo[80];
-    int posicao_titulo;
+    int posicao_titulo, cc, f,auxDia, auxMes, maxDias;
 
-    printf("\nQual o título do livro? ");
+    printf("\nTitulo do livro: ");
     gets(auxTitulo);
     fflush(stdin);
 
@@ -569,10 +569,52 @@ void efetivar_emprestimo_reserva( aluno *pAluno,livro *pLivro,int posicao_ra){
         system("PAUSE");
     }else{
 
+        for(cc=0; cc<2; cc++){
+
+            //Livre pra emprestado.
+            if((pLivro->status+cc)->sigla == 'L'){
+
+                (pLivro->status+cc)->sigla = 'E';
+
+                strcpy((pLivro->status+cc)->RA, pAluno->RA);
+
+                printf("\nMes: "); 
+                scanf("%i",&auxMes);    
+                
+                maxDias = 31;
+                if(auxMes == 2) maxDias = 28;
+                if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
+                
+                do{
+                    printf("\nDia: ");
+                    scanf("%i",&auxDia);
+                }while(auxDia > maxDias);
+                
+                (pLivro->status+cc)->dia_ret = auxDia;
+                (pLivro->status+cc)->mes_ret = auxMes;
+
+                (pLivro->status+cc)->dia_dev = ((pLivro->status+cc)->dia_ret) + 7;
+                (pLivro->status+cc)->mes_dev = ((pLivro->status+cc)->mes_ret);
+
+                pAluno->emprestado++;
+
+                for(f = 0; f<4; f++){
+                    if((pAluno->tabela+f)->sigla == 'L'){
+                        (pAluno->tabela+f)->sigla = 'E';
+                        (pAluno->tabela+f)->reg = pLivro->reg;
+                        break;
+                    }
+                }
+
+                break;
+            }
+        }
         
-        
-        atualizar_titulo(pLivro, posicao_titulo);
-        atualizar_aluno(pAluno, posicao_ra);
+        printar_aluno(pAluno);
+        printar_livro(pLivro);
+        system("PAUSE");
+        // atualizar_titulo(pLivro, posicao_titulo);
+        // atualizar_aluno(pAluno, posicao_ra);
     }
 }
 
