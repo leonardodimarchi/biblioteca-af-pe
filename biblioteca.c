@@ -50,6 +50,7 @@ typedef struct livro{
 //Funcoes padrao.
 void emprestimo_reserva(aluno *pAluno, livro *pLivro);
 void efetivar_emprestimo_reserva( aluno *pAluno,livro *pLivro,int posicao_ra);
+void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc);
 void printar_menu();
 
 //Funcoes aluno.
@@ -71,8 +72,8 @@ void printar_livro(livro *p);
 int buscar_status(livro *p, char status_colocado);
 int buscar_titulo(livro *p, char *titulo_colocado);
 int atualizar_livro(livro *pTitulo,int posicao_titulo);
+int verificar_reservas(livro *p);
 int verificar_qtd_livros();
-
 
 //Main
 main(){
@@ -344,6 +345,20 @@ int atualizar_livro(livro *pLivro,int posicao_titulo){
     fclose(arquivo);
 }
 
+//Retorna 1 caso nao tenha reservas
+int verificar_reservas(livro *p){
+    int cc;
+
+    for ( cc = 0; cc < 2; cc++){
+        if((p->status+cc)->sigla == 'R'){
+            return 0;
+        }
+    }
+
+    return 1;
+    
+}
+
 //---------FIM -> FUNCOES LIVRO---------
 
 //---------INICIO -> FUNCOES ALUNO---------
@@ -556,7 +571,7 @@ void emprestimo_reserva(aluno *pAluno, livro *pLivro){
 //Fazer o emprestimo e reserva propriamente dito.
 void efetivar_emprestimo_reserva( aluno *pAluno,livro *pLivro,int posicao_ra){
     char auxTitulo[80];
-    int posicao_titulo, cc, f,auxDia, auxMes, maxDias;
+    int posicao_titulo,cc,check = 0;
 
     printf("\nTitulo do livro: ");
     gets(auxTitulo);
@@ -570,52 +585,82 @@ void efetivar_emprestimo_reserva( aluno *pAluno,livro *pLivro,int posicao_ra){
     }else{
 
         for(cc=0; cc<2; cc++){
-
-            //Livre pra emprestado.
+            //Livre -> emprestado.
             if((pLivro->status+cc)->sigla == 'L'){
-
-                (pLivro->status+cc)->sigla = 'E';
-
-                strcpy((pLivro->status+cc)->RA, pAluno->RA);
-
-                printf("\nMes: "); 
-                scanf("%i",&auxMes);    
+                alterar_status_emprestimo(pAluno, pLivro, 'E', cc);
                 
-                maxDias = 31;
-                if(auxMes == 2) maxDias = 28;
-                if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
-                
-                do{
-                    printf("\nDia: ");
-                    scanf("%i",&auxDia);
-                }while(auxDia > maxDias);
-                
-                (pLivro->status+cc)->dia_ret = auxDia;
-                (pLivro->status+cc)->mes_ret = auxMes;
-
-                (pLivro->status+cc)->dia_dev = ((pLivro->status+cc)->dia_ret) + 7;
-                (pLivro->status+cc)->mes_dev = ((pLivro->status+cc)->mes_ret);
-
-                pAluno->emprestado++;
-
-                for(f = 0; f<4; f++){
-                    if((pAluno->tabela+f)->sigla == 'L'){
-                        (pAluno->tabela+f)->sigla = 'E';
-                        (pAluno->tabela+f)->reg = pLivro->reg;
-                        break;
-                    }
-                }
-
                 break;
+            }else{
+                //Reserva
+                if((pLivro->status+cc)->sigla == 'E' && verificar_reservas(pLivro) == 1){
+                    alterar_status_emprestimo(pAluno, pLivro, 'R', cc);
+                    break;
+                }else if(verificar_reservas(pLivro) != 1){
+                    printf("\nInfelizmente o livro ja esta reservado");
+                    printf("\nRA de Emprestimo: %s",(pLivro->status+cc)->RA);
+                    printf("\nData devolucao: %i / %i",(pLivro->status+cc)->dia_dev,(pLivro->status+cc)->mes_dev);
+
+                    check = 1;
+                    break;
+                }
             }
         }
+
+             
         
-        printar_aluno(pAluno);
-        printar_livro(pLivro);
+        atualizar_livro(pLivro, posicao_titulo);
+        atualizar_aluno(pAluno, posicao_ra);
+        
+        if(check != 1){
+            printar_aluno(pAluno);
+            printar_livro(pLivro);
+        }
+        
         system("PAUSE");
-        // atualizar_titulo(pLivro, posicao_titulo);
-        // atualizar_aluno(pAluno, posicao_ra);
     }
+}
+
+//Atualizar as informacoes do livro e aluno
+void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
+    int f,auxDia, auxMes, maxDias;
+
+    (pLivro->status+cc)->sigla = opc;
+
+    strcpy((pLivro->status+cc)->RA, pAluno->RA);
+
+    if(opc != 'R'){
+        printf("\nMes: "); 
+        scanf("%i",&auxMes);    
+        
+        maxDias = 31;
+        if(auxMes == 2) maxDias = 28;
+        if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
+        
+        do{
+            printf("\nDia: ");
+            scanf("%i",&auxDia);
+        }while(auxDia > maxDias);
+        
+        (pLivro->status+cc)->dia_ret = auxDia;
+        (pLivro->status+cc)->mes_ret = auxMes;
+
+        (pLivro->status+cc)->dia_dev = ((pLivro->status+cc)->dia_ret) + 7;
+        (pLivro->status+cc)->mes_dev = ((pLivro->status+cc)->mes_ret);
+
+        pAluno->emprestado++;
+    }else{
+        pAluno->reservado++;
+    }
+    
+
+    for(f = 0; f<4; f++){
+        if((pAluno->tabela+f)->sigla == 'L'){
+            (pAluno->tabela+f)->sigla = opc;
+            (pAluno->tabela+f)->reg = pLivro->reg;
+            break;
+        }
+    }
+
 }
 
 //Printar o menu
