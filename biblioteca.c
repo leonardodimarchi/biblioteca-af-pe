@@ -564,7 +564,7 @@ void emprestimo_reserva(aluno *pAluno, livro *pLivro){
         if(pAluno->emprestado < 3 || pAluno->reservado < 1){
             efetivar_emprestimo_reserva(pAluno, pLivro, posicao_ra);
         }else{
-            printf("\nO aluno ja esta com o limite de emprestimo e reservas.");
+            printf("\nO aluno ja esta com o limite de emprestimo e reservas.\n\n");
             system("PAUSE");
         }
     }
@@ -598,9 +598,9 @@ void efetivar_emprestimo_reserva( aluno *pAluno,livro *pLivro,int posicao_ra){
                     alterar_status_emprestimo(pAluno, pLivro, 'R', 1);
                     break;
                 }else if(verificar_reservas(pLivro) != 1){
-                    printf("\nInfelizmente o livro ja esta reservado");
+                    printf("\nInfelizmente o livro ja esta reservado.\n");
                     printf("\nRA de Emprestimo: %s",(pLivro->status+cc)->RA);
-                    printf("\nData devolucao: %i/%i\n",(pLivro->status+cc)->dia_dev,(pLivro->status+cc)->mes_dev);
+                    printf("\nData devolucao: %i/%i\n\n",(pLivro->status+cc)->dia_dev,(pLivro->status+cc)->mes_dev);
 
                     check = 1;
                     break;
@@ -608,8 +608,6 @@ void efetivar_emprestimo_reserva( aluno *pAluno,livro *pLivro,int posicao_ra){
             }
         }
 
-             
-        
         atualizar_livro(pLivro, posicao_titulo);
         atualizar_aluno(pAluno, posicao_ra);
         
