@@ -628,6 +628,10 @@ void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
 
     strcpy((pLivro->status+cc)->RA, pAluno->RA);
 
+    maxDias = 31;
+    if(auxMes == 2) maxDias = 28;
+    if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
+
     if(opc != 'R'){
 
         do{
@@ -635,11 +639,6 @@ void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
             scanf("%i",&auxMes); 
         }while(auxMes < 1 || auxMes > 12);
           
-        
-        maxDias = 31;
-        if(auxMes == 2) maxDias = 28;
-        if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
-        
         do{
             printf("\nDia: ");
             scanf("%i",&auxDia);
@@ -656,8 +655,8 @@ void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
         (pLivro->status+cc)->mes_ret = (pLivro->status+0)->mes_dev;    
     }
     
+    //Data de devolução
     (pLivro->status+cc)->dia_dev = ((pLivro->status+cc)->dia_ret) + 7;
-
     if((pLivro->status+cc)->dia_dev > maxDias){ //Se passar do maximo de dias do mês
         
     }else{
