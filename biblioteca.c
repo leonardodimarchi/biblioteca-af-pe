@@ -629,8 +629,12 @@ void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
     strcpy((pLivro->status+cc)->RA, pAluno->RA);
 
     if(opc != 'R'){
-        printf("\nMes: "); 
-        scanf("%i",&auxMes);    
+
+        do{
+            printf("\nMes: "); 
+            scanf("%i",&auxMes); 
+        }while(auxMes < 1 || auxMes > 12);
+          
         
         maxDias = 31;
         if(auxMes == 2) maxDias = 28;
@@ -644,20 +648,23 @@ void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
         (pLivro->status+cc)->dia_ret = auxDia;
         (pLivro->status+cc)->mes_ret = auxMes;
 
-        (pLivro->status+cc)->dia_dev = ((pLivro->status+cc)->dia_ret) + 7;
-        (pLivro->status+cc)->mes_dev = ((pLivro->status+cc)->mes_ret);    //Mudar aqui, colocar alguns ifs.
 
         pAluno->emprestado++;
     }else{
         pAluno->reservado++;
         (pLivro->status+cc)->dia_ret = ((pLivro->status+0)->dia_dev) + 1;
         (pLivro->status+cc)->mes_ret = (pLivro->status+0)->mes_dev;    
-
-        (pLivro->status+cc)->dia_dev = ((pLivro->status+cc)->dia_ret) + 7;;
-        (pLivro->status+cc)->mes_dev = ((pLivro->status+cc)->mes_ret); //Aqui tbm, o mesmo esquema de cima
     }
     
+    (pLivro->status+cc)->dia_dev = ((pLivro->status+cc)->dia_ret) + 7;
 
+    if((pLivro->status+cc)->dia_dev > maxDias){ //Se passar do maximo de dias do mês
+        
+    }else{
+        (pLivro->status+cc)->mes_dev = ((pLivro->status+cc)->mes_ret);   
+    }
+         
+    //Aluno
     for(f = 0; f<4; f++){
         if((pAluno->tabela+f)->sigla == 'L'){
             (pAluno->tabela+f)->sigla = opc;
