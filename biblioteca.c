@@ -145,7 +145,10 @@ void printar_livro(livro *p){
                 printf("\n\t\tDevolucao: ---");
             }else{
                 printf("\n\t\tRetirado: %i/%i",(p->status+f)->dia_ret,(p->status+f)->mes_ret);
-                printf("\n\t\tDevolucao: %i/%i",(p->status+f)->dia_dev,(p->status+f)->mes_dev);
+                
+                if((p->status+f)->dia_dev != -1){
+                    printf("\n\t\tDevolucao: %i/%i",(p->status+f)->dia_dev,(p->status+f)->mes_dev);
+                }
             }
         }
     }
@@ -650,6 +653,10 @@ void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
         pAluno->emprestado++;
     }else{
         pAluno->reservado++;
+        (pLivro->status+cc)->dia_ret = ((pLivro->status+0)->dia_dev) + 1;
+        (pLivro->status+cc)->mes_ret = (pLivro->status+0)->mes_dev;
+        (pLivro->status+cc)->mes_dev = -1;
+        (pLivro->status+cc)->dia_dev = -1;
     }
     
 
