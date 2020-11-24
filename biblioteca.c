@@ -628,9 +628,7 @@ void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
 
     strcpy((pLivro->status+cc)->RA, pAluno->RA);
 
-    maxDias = 31;
-    if(auxMes == 2) maxDias = 28;
-    if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
+    
 
     if(opc != 'R'){
 
@@ -638,6 +636,10 @@ void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
             printf("\nMes: "); 
             scanf("%i",&auxMes); 
         }while(auxMes < 1 || auxMes > 12);
+
+        maxDias = 31;
+        if(auxMes == 2) maxDias = 28;
+        if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
           
         do{
             printf("\nDia: ");
@@ -652,15 +654,26 @@ void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
     }else{
         pAluno->reservado++;
         (pLivro->status+cc)->dia_ret = ((pLivro->status+0)->dia_dev) + 1;
-        (pLivro->status+cc)->mes_ret = (pLivro->status+0)->mes_dev;    
+        (pLivro->status+cc)->mes_ret = (pLivro->status+0)->mes_dev;  
+
+        maxDias = 31;
+        if((pLivro->status+cc)->mes_ret == 2) maxDias = 28;
+        if((pLivro->status+cc)->mes_ret == 4 || (pLivro->status+cc)->mes_ret == 6 || (pLivro->status+cc)->mes_ret == 8 || (pLivro->status+cc)->mes_ret == 11) maxDias = 30;  
     }
     
     //Data de devolução
     (pLivro->status+cc)->dia_dev = ((pLivro->status+cc)->dia_ret) + 7;
+
     if((pLivro->status+cc)->dia_dev > maxDias){ //Se passar do maximo de dias do mês
-        
+            if((pLivro->status+cc)->mes_ret  == 12){
+                (pLivro->status+cc)->mes_dev = 1;
+            }else{
+                (pLivro->status+cc)->mes_dev = (pLivro->status+cc)->mes_ret + 1;
+            }
+
+            (pLivro->status+cc)->dia_dev =  (pLivro->status+cc)->dia_dev - maxDias;
     }else{
-        (pLivro->status+cc)->mes_dev = ((pLivro->status+cc)->mes_ret);   
+        (pLivro->status+cc)->mes_dev = (pLivro->status+cc)->mes_ret;   
     }
          
     //Aluno
