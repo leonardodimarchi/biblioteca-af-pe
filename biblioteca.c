@@ -7,6 +7,11 @@
 */
 
 // 1 - Etapa (Cadastro e Gravação dos alunos e dos livros): Completa.
+// 2 - Etapa (Fazer rotina para emprÃ©stimo/reserva): Completa.
+// 3 - Etapa (Devolução completa): Fazendo.
+
+/* 3.1 - Etapa (Ponto extra/Deletar livro e arrumar 
+rotina do cadastro livros - *opcional*): A fazer?.*/
 
 //Bibliotecas
 #include<stdlib.h>
@@ -51,6 +56,7 @@ typedef struct livro{
 void emprestimo_reserva(aluno *pAluno, livro *pLivro);
 void efetivar_emprestimo_reserva( aluno *pAluno,livro *pLivro,int posicao_ra);
 void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc);
+void devolucao_livro(aluno *pAluno, livro *pLivro);
 void printar_menu();
 
 //Funcoes aluno.
@@ -112,8 +118,10 @@ main(){
             case 8:
                 emprestimo_reserva(estudante, book);
                 break;
+            case 9:
+                devolucao_livro(estudante, book);
         }
-    }while(opc != 9);
+    }while(opc != 0);
 }
 
 //---------INICIO -> FUNCOES LIVRO---------
@@ -544,6 +552,101 @@ void aloca_aluno(aluno **p){
 
 //---------INICIO -> FUNCOES PADRAO---------
 
+void devolucao_livro(aluno *pAluno, livro *pLivro){
+    char auxRa[7], auxTitulo[80];
+    int cc,posicao_ra, posicao_titulo, auxDia, auxMes, maxDias,auxDiaMulta, auxMesMulta, auxMulta = 0, multa = 0;
+
+    system("cls");
+
+    printf("\nRA do aluno: ");
+    gets(auxRa);
+    fflush(stdin);
+
+    posicao_ra = buscar_ra(pAluno,auxRa);
+
+    if(posicao_ra == -1){
+        printf("\nRA Invalido. Tente novamente!\n");
+        system("PAUSE");
+        return;
+    }
+
+    printf("\nTitulo do livro a ser devolvido: ");
+    gets(auxTitulo);
+    fflush(stdin);
+
+    posicao_titulo = buscar_titulo(pLivro,auxTitulo);
+
+    if(posicao_titulo == -1){
+        printf("\nTitulo do livro invalido!\n");
+        system("PAUSE");
+        return;
+    }
+
+    do{
+        system("cls");
+
+        printf("\nData da devolucao (Atual)");
+
+        printf("\n\tDia: ");
+        scanf("%i",&auxDia);
+        fflush(stdin);
+
+        printf("\tMes: ");
+        scanf("%i",&auxMes);
+        fflush(stdin);
+
+        maxDias = 31;
+        if(auxMes == 2) maxDias = 28;
+        if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
+
+        if(auxDia <= 0 || auxDia > maxDias || auxMes <= 0 || auxMes > 12 || auxMes < (pLivro->status+0)->mes_dev){
+            printf("\nData invalida. Tente novamente\n\n");
+            system("PAUSE");
+        }
+
+    }while(auxDia <= 0 || auxDia > maxDias || auxMes <= 0 || auxMes > 12 || auxMes < (pLivro->status+0)->mes_dev);
+    
+    if( (pLivro->status+0)->sigla == 'E' && strcmp((pLivro->status+0)->RA, auxRa) == 0){
+        auxDiaMulta = auxDia - (pLivro->status+0)->dia_dev;
+        auxMesMulta = auxMes - (pLivro->status+0)->mes_dev;
+
+        auxMes = (pLivro->status+0)->mes_dev;
+
+        maxDias = 31;
+        if(auxMes == 2) maxDias = 28;
+        if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
+
+        if(auxMesMulta == 0){
+            auxMulta = auxDiaMulta;
+        }else{
+            if(auxMesMulta == 1){
+                auxMulta = auxDia + (maxDias - (pLivro->status+0)->dia_dev);
+            }else{
+                auxMulta = auxDia + (maxDias - (pLivro->status+0)->dia_dev);
+
+                for(cc = 1; cc <= auxMesMulta; cc++){
+                    auxMes++;
+
+                    maxDias = 31;
+                    if(auxMes == 2) maxDias = 28;
+                    if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
+
+                    auxMulta += maxDias;                
+                }
+
+                auxMulta -= maxDias;
+            }
+        }
+
+        for(cc = 0; cc < auxMulta; cc++){
+            multa += 3;
+        }
+
+        printf("\nValor da multa por atraso = %i\n\n",multa);
+        system("PAUSE");
+    }
+}
+
 //Emprestimo e Reserva de livros
 void emprestimo_reserva(aluno *pAluno, livro *pLivro){
     char auxRa[7];
@@ -706,10 +809,11 @@ void printar_menu(){
     printf("\n--------------------");
 
     printf("\n<8> Emprestimo / Reserva");
+    printf("\n<9> Devolucao");
 
     printf("\n--------------------");
 
-    printf("\n<9> Sair");
+    printf("\n<0> Sair");
 
     printf("\n--------------------");
     
