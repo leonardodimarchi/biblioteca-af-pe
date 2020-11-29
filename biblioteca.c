@@ -631,6 +631,9 @@ void devolucao_livro(aluno *pAluno, livro *pLivro){
                     break;
                 }
             }
+            pAluno->emprestado--;
+
+            atualizar_aluno(pAluno, posicao_ra);
 
             strcpy(auxRa,(pLivro->status+1)->RA);
 
@@ -647,10 +650,29 @@ void devolucao_livro(aluno *pAluno, livro *pLivro){
 
                 atualizar_livro(pLivro, posicao_titulo);
                 atualizar_aluno(pAluno, posicao_ra);
+
+                printar_aluno(pAluno);
+                printar_livro(pLivro);
+
             }else{
                 printf("\nO aluno da reserva ja esta com o limite de emprestimos.\n\n");
                 system("PAUSE");
             }
+        }else{
+
+            //Aluno
+            for(f = 0; f<4; f++){
+                if((pAluno->tabela+f)->reg == pLivro->reg){
+                    (pAluno->tabela+f)->sigla = 'L';
+                    (pAluno->tabela+f)->reg = -1;
+                    break;
+                }
+            }
+            pAluno->emprestado--;
+            (pLivro->status+0)->sigla = 'L';
+
+            atualizar_aluno(pAluno, posicao_ra);
+            atualizar_livro(pLivro, posicao_titulo);
         }
     }
 }
@@ -686,15 +708,16 @@ void emprestimo_pos_devolucao(aluno *pAluno, livro *pLivro, int auxDia, int auxM
     for(f = 0; f<4; f++){
         if((pAluno->tabela+f)->reg == pLivro->reg){
             (pAluno->tabela+f)->sigla = 'E';
-            (pAluno->tabela+f)->reg = pLivro->reg;
             break;
         }
     }
+    pAluno->reservado--;
+    pAluno->emprestado++;
 
     (pLivro->status+1)->sigla = 'L';
 
 }
-
+    
 //Multar
 void multar(int auxDia, int auxMes, livro *pLivro){
     int cc, maxDias,auxDiaMulta, auxMesMulta, auxMulta = 0, multa = 0;
