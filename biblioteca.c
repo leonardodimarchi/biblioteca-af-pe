@@ -58,8 +58,8 @@ void efetivar_emprestimo_reserva( aluno *pAluno,livro *pLivro,int posicao_ra);
 void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc);
 void devolucao_livro(aluno *pAluno, livro *pLivro);
 void multar(int auxDia, int auxMes, livro *pLivro);
+void emprestimo_pos_devolucao(aluno *pAluno, livro *pLivro, int auxDia, int auxMes);
 void printar_menu();
-
 
 //Funcoes aluno.
 void aloca_aluno(aluno **p);
@@ -144,19 +144,29 @@ void printar_livro(livro *p){
         }else{
             if((p->status+f)->sigla == 'E'){
                 printf("Emprestado");
+                printf("\n\t\tRA: %s",(p->status+f)->RA);
+
+                if((p->status+f)->dia_ret == -1){
+                    printf("\n\t\tRetirado: ---");
+                    printf("\n\t\tDevolucao: ---");
+                }else{
+                    printf("\n\t\tRetirado: %i/%i",(p->status+f)->dia_ret,(p->status+f)->mes_ret);
+                    printf("\n\t\tDevolucao: %i/%i",(p->status+f)->dia_dev,(p->status+f)->mes_dev);
+                }
             }else{
                 printf("Reservado");
-            }
-            
-            printf("\n\t\tRA: %s",(p->status+f)->RA);
 
-            if((p->status+f)->dia_ret == -1){
-                printf("\n\t\tRetirado: ---");
-                printf("\n\t\tDevolucao: ---");
-            }else{
-                printf("\n\t\tRetirado: %i/%i",(p->status+f)->dia_ret,(p->status+f)->mes_ret);
-                printf("\n\t\tDevolucao: %i/%i",(p->status+f)->dia_dev,(p->status+f)->mes_dev);
+                printf("\n\t\tRA: %s",(p->status+f)->RA);
+                
+                if((p->status+f)->dia_ret == -1){
+                    printf("\n\t\tRetirado: ---");
+                    printf("\n\t\tDevolucao: ---");
+                }else{
+                    printf("\n\t\tEspera-se retirar em: %i/%i",(p->status+f)->dia_ret,(p->status+f)->mes_ret);
+                    printf("\n\t\tEspera-se devolver em: %i/%i",(p->status+f)->dia_dev,(p->status+f)->mes_dev);
+                }
             }
+        
         }
     }
 
@@ -556,7 +566,7 @@ void aloca_aluno(aluno **p){
 
 void devolucao_livro(aluno *pAluno, livro *pLivro){
     char auxRa[7], auxTitulo[80];
-    int posicao_ra, posicao_titulo, auxDia, auxMes, maxDias;
+    int f, posicao_ra, posicao_titulo, auxDia, auxMes, maxDias;
 
     system("cls");
 
@@ -610,12 +620,84 @@ void devolucao_livro(aluno *pAluno, livro *pLivro){
     
     if( (pLivro->status+0)->sigla == 'E' && strcmp((pLivro->status+0)->RA, auxRa) == 0){
         multar(auxDia, auxMes, pLivro);
+
+        if((pLivro->status+1)->sigla == 'R'){
+
+            //Aluno
+            for(f = 0; f<4; f++){
+                if((pAluno->tabela+f)->reg == pLivro->reg){
+                    (pAluno->tabela+f)->sigla = 'L';
+                    (pAluno->tabela+f)->reg = -1;
+                    break;
+                }
+            }
+
+            strcpy(auxRa,(pLivro->status+1)->RA);
+
+            posicao_ra = buscar_ra(pAluno,auxRa);
+
+            if(posicao_ra == -1){
+                printf("\nRA Invalido. Tente novamente!\n");
+                system("PAUSE");
+                return;
+            }
+
+            if(pAluno->emprestado < 3 || pAluno->reservado < 1){
+                emprestimo_pos_devolucao(pAluno, pLivro, auxDia, auxMes);
+
+                atualizar_livro(pLivro, posicao_titulo);
+                atualizar_aluno(pAluno, posicao_ra);
+            }else{
+                printf("\nO aluno da reserva ja esta com o limite de emprestimos.\n\n");
+                system("PAUSE");
+            }
+        }
     }
 }
 
+//Emprestimo para devolucao
+void emprestimo_pos_devolucao(aluno *pAluno, livro *pLivro, int auxDia, int auxMes){
+    int maxDias, f;
+
+    strcpy((pLivro->status+0)->RA, pAluno->RA);
+    (pLivro->status+0)->dia_ret = auxDia;
+    (pLivro->status+0)->mes_ret = auxMes;
+
+    maxDias = 31;
+    if((pLivro->status+0)->mes_ret == 2) maxDias = 28;
+    if((pLivro->status+0)->mes_ret == 4 || (pLivro->status+0)->mes_ret == 6 || (pLivro->status+0)->mes_ret == 8 || (pLivro->status+0)->mes_ret == 11) maxDias = 30;  
+    
+    //Data de devolução
+    (pLivro->status+0)->dia_dev = ((pLivro->status+0)->dia_ret) + 7;
+
+    if((pLivro->status+0)->dia_dev > maxDias){ //Se passar do maximo de dias do mês
+            if((pLivro->status+0)->mes_ret  == 12){
+                (pLivro->status+0)->mes_dev = 1;
+            }else{
+                (pLivro->status+0)->mes_dev = (pLivro->status+0)->mes_ret + 1;
+            }
+
+            (pLivro->status+0)->dia_dev =  (pLivro->status+0)->dia_dev - maxDias;
+    }else{
+        (pLivro->status+0)->mes_dev = (pLivro->status+0)->mes_ret;   
+    }
+         
+    //Aluno
+    for(f = 0; f<4; f++){
+        if((pAluno->tabela+f)->reg == pLivro->reg){
+            (pAluno->tabela+f)->sigla = 'E';
+            (pAluno->tabela+f)->reg = pLivro->reg;
+            break;
+        }
+    }
+
+    (pLivro->status+1)->sigla = 'L';
+
+}
+
 //Multar
-void multar(int auxDias, int auxMes, livro *pLivro){
-    int cc,auxDia, auxMes, maxDias,auxDiaMulta, auxMesMulta, auxMulta = 0, multa = 0;
+void multar(int auxDia, int auxMes, livro *pLivro){
+    int cc, maxDias,auxDiaMulta, auxMesMulta, auxMulta = 0, multa = 0;
 
     auxDiaMulta = auxDia - (pLivro->status+0)->dia_dev;
     auxMesMulta = auxMes - (pLivro->status+0)->mes_dev;
@@ -652,8 +734,14 @@ void multar(int auxDias, int auxMes, livro *pLivro){
         multa += 3;
     }
 
-    printf("\nValor da multa por atraso = %i\n\n",multa);
-    system("PAUSE");
+    if(multa > 0){
+        printf("\nValor da multa por atraso = %i\n\n",multa);
+        system("PAUSE");
+    }else{
+        printf("\nEntrega dentro do prazo\n\n");
+        system("PAUSE");
+    }
+    
 }
 
 //Emprestimo e Reserva de livros
@@ -740,7 +828,6 @@ void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
 
     strcpy((pLivro->status+cc)->RA, pAluno->RA);
 
-    
 
     if(opc != 'R'){
 
@@ -760,7 +847,6 @@ void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
         
         (pLivro->status+cc)->dia_ret = auxDia;
         (pLivro->status+cc)->mes_ret = auxMes;
-
 
         pAluno->emprestado++;
     }else{
