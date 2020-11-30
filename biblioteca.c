@@ -7,7 +7,7 @@
 */
 
 // 1 - Etapa (Cadastro e Gravação dos alunos e dos livros): Completa.
-// 2 - Etapa (Fazer rotina para emprÃ©stimo/reserva): Completa.
+// 2 - Etapa (Fazer rotina para emprestimo/reserva): Completa.
 // 3 - Etapa (Devolução completa): Fazendo.
 
 /* 3.1 - Etapa (Ponto extra/Deletar livro e arrumar 
@@ -564,6 +564,7 @@ void aloca_aluno(aluno **p){
 
 //---------INICIO -> FUNCOES PADRAO---------
 
+//Devolver livro
 void devolucao_livro(aluno *pAluno, livro *pLivro){
     char auxRa[7], auxTitulo[80];
     int f, posicao_ra, posicao_titulo, auxDia, auxMes, maxDias;
@@ -578,6 +579,12 @@ void devolucao_livro(aluno *pAluno, livro *pLivro){
 
     if(posicao_ra == -1){
         printf("\nRA Invalido. Tente novamente!\n");
+        system("PAUSE");
+        return;
+    }
+
+    if(pAluno->emprestado < 1){
+        printf("\nO Aluno nao possui livros emprestados\n");
         system("PAUSE");
         return;
     }
@@ -651,8 +658,12 @@ void devolucao_livro(aluno *pAluno, livro *pLivro){
                 atualizar_livro(pLivro, posicao_titulo);
                 atualizar_aluno(pAluno, posicao_ra);
 
-                printar_aluno(pAluno);
+                system("cls");
+
+                printf("\nNovo emprestimo para o livro\n\n");
                 printar_livro(pLivro);
+                printar_aluno(pAluno);
+                system("PAUSE");
 
             }else{
                 printf("\nO aluno da reserva ja esta com o limite de emprestimos.\n\n");
@@ -673,6 +684,13 @@ void devolucao_livro(aluno *pAluno, livro *pLivro){
 
             atualizar_aluno(pAluno, posicao_ra);
             atualizar_livro(pLivro, posicao_titulo);
+
+            system("cls");
+
+            printf("\nLivro devolvido com sucesso\n\n");
+            printar_livro(pLivro);
+            printar_aluno(pAluno);
+            system("PAUSE");
         }
     }
 }
@@ -851,22 +869,30 @@ void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
 
     strcpy((pLivro->status+cc)->RA, pAluno->RA);
 
-
     if(opc != 'R'){
-
         do{
-            printf("\nMes: "); 
-            scanf("%i",&auxMes); 
-        }while(auxMes < 1 || auxMes > 12);
+            system("cls");
 
-        maxDias = 31;
-        if(auxMes == 2) maxDias = 28;
-        if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
-          
-        do{
-            printf("\nDia: ");
+            printf("\nData da devolucao (Atual)");
+
+            printf("\n\tDia: ");
             scanf("%i",&auxDia);
-        }while(auxDia > maxDias);
+            fflush(stdin);
+
+            printf("\tMes: ");
+            scanf("%i",&auxMes);
+            fflush(stdin);
+
+            maxDias = 31;
+            if(auxMes == 2) maxDias = 28;
+            if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
+
+            if(auxDia <= 0 || auxDia > maxDias || auxMes <= 0 || auxMes > 12 || auxMes < (pLivro->status+0)->mes_dev){
+                printf("\nData invalida. Tente novamente\n\n");
+                system("PAUSE");
+            }
+        }while(auxDia <= 0 || auxDia > maxDias || auxMes <= 0 || auxMes > 12);
+        
         
         (pLivro->status+cc)->dia_ret = auxDia;
         (pLivro->status+cc)->mes_ret = auxMes;
