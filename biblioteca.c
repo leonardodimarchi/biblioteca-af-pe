@@ -618,12 +618,12 @@ void devolucao_livro(aluno *pAluno, livro *pLivro){
         if(auxMes == 2) maxDias = 28;
         if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
 
-        if(auxDia <= 0 || auxDia > maxDias || auxMes <= 0 || auxMes > 12 || auxMes < (pLivro->status+0)->mes_dev){
+        if(auxDia <= 0 || auxDia > maxDias || auxMes <= 0 || auxMes > 12){
             printf("\nData invalida. Tente novamente\n\n");
             system("PAUSE");
         }
 
-    }while(auxDia <= 0 || auxDia > maxDias || auxMes <= 0 || auxMes > 12 || auxMes < (pLivro->status+0)->mes_dev);
+    }while(auxDia <= 0 || auxDia > maxDias || auxMes <= 0 || auxMes > 12);
     
     if( (pLivro->status+0)->sigla == 'E' && strcmp((pLivro->status+0)->RA, auxRa) == 0){
         multar(auxDia, auxMes, pLivro);
@@ -738,10 +738,12 @@ void emprestimo_pos_devolucao(aluno *pAluno, livro *pLivro, int auxDia, int auxM
     
 //Multar
 void multar(int auxDia, int auxMes, livro *pLivro){
-    int cc, maxDias,auxDiaMulta, auxMesMulta, auxMulta = 0, multa = 0;
+    int cc, maxDias,auxDiaMulta, auxMesMulta, auxMulta = 0, multa = 0, check = 0;
+
+    if( (pLivro->status+0)->mes_dev ==  12) check = 1;
 
     auxDiaMulta = auxDia - (pLivro->status+0)->dia_dev;
-    auxMesMulta = auxMes - (pLivro->status+0)->mes_dev;
+    auxMesMulta = auxMes - (pLivro->status+0)->mes_dev; 
 
     auxMes = (pLivro->status+0)->mes_dev;
 
@@ -758,16 +760,21 @@ void multar(int auxDia, int auxMes, livro *pLivro){
             auxMulta = auxDia + (maxDias - (pLivro->status+0)->dia_dev);
 
             for(cc = 1; cc <= auxMesMulta; cc++){
-                auxMes++;
+                
+                if(auxMes == 12){
+                    auxMes = 1;
+                }else{
+                    auxMes++;
+                }
 
                 maxDias = 31;
                 if(auxMes == 2) maxDias = 28;
                 if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
 
-                auxMulta += maxDias;                
+                auxMulta += maxDias;              
             }
 
-            auxMulta -= maxDias;
+            if(check == 0) auxMulta -= maxDias;
         }
     }
 
@@ -775,7 +782,7 @@ void multar(int auxDia, int auxMes, livro *pLivro){
         multa += 3;
     }
 
-    if(multa > 0){
+    if(multa > 0 || check == 1){
         printf("\nValor da multa por atraso = %i\n\n",multa);
         system("PAUSE");
     }else{
@@ -873,7 +880,7 @@ void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
         do{
             system("cls");
 
-            printf("\nData da devolucao (Atual)");
+            printf("\nData do emprestimo (Atual)");
 
             printf("\n\tDia: ");
             scanf("%i",&auxDia);
@@ -887,10 +894,11 @@ void alterar_status_emprestimo(aluno *pAluno, livro *pLivro, char opc, int cc){
             if(auxMes == 2) maxDias = 28;
             if(auxMes == 4 || auxMes == 6 || auxMes == 8 || auxMes == 11) maxDias = 30;
 
-            if(auxDia <= 0 || auxDia > maxDias || auxMes <= 0 || auxMes > 12 || auxMes < (pLivro->status+0)->mes_dev){
+            if(auxDia <= 0 || auxDia > maxDias || auxMes <= 0 || auxMes > 12){
                 printf("\nData invalida. Tente novamente\n\n");
                 system("PAUSE");
             }
+
         }while(auxDia <= 0 || auxDia > maxDias || auxMes <= 0 || auxMes > 12);
         
         
