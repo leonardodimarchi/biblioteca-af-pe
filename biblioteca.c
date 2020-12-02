@@ -301,10 +301,14 @@ void aloca_livro(livro **p){
 
 //Cadastro do livro.
 void cadastro_livro(livro *p){
-    int f, num_reg_livro, pos_livro,check = 0;
+    int f, num_reg_livro, pos_livro = -1,check = 0;
 
-    pos_livro = verificar_vago_livro(p);
-
+    if(verificar_qtd_livros() > 0){
+        pos_livro = verificar_vago_livro(p);
+    }else{
+        check = 1;
+    }
+        
     if(pos_livro != -1){
         printf("\nInforme o nome do livro: ");
         gets(p->titulo);
@@ -441,7 +445,7 @@ int verificar_reservas(livro *p){
 //Deletar livro
 void excluir_livro(livro *pLivro, aluno *pAluno){
     char auxTitulo[80];
-    int auxReg, verificar_reg,cc,check = 0, posicao_ra;
+    int auxReg, verificar_reg,cc, posicao_ra;
 
     do{
         system("cls");
@@ -481,7 +485,6 @@ void excluir_livro(livro *pLivro, aluno *pAluno){
                 }
                 pAluno->emprestado--;
 
-                check=1;
             }
         }
 
@@ -503,14 +506,11 @@ void excluir_livro(livro *pLivro, aluno *pAluno){
                 }
                 pAluno->reservado--;
 
-                check=1;
             }
             
         }
 
-        if(check == 0){
-            strcpy(pLivro->titulo, "@");
-        }
+        strcpy(pLivro->titulo, "@");
 
         atualizar_livro(pLivro,verificar_reg);
         atualizar_aluno(pLivro,posicao_ra);
@@ -549,7 +549,7 @@ int mostrar_titulo(livro *pLivro, char *auxTitulo){
         return 0;
     }else{
         printf("\n");
-        system("PAUSE");
+        
         return 1;
     }
 
