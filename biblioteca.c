@@ -84,6 +84,7 @@ int buscar_titulo(livro *p, char *titulo_colocado);
 int buscar_reg(livro *p, int auxReg);
 int atualizar_livro(livro *pTitulo,int posicao_titulo);
 int verificar_reservas(livro *p);
+int verificar_vago_livro(livro *pLivro);
 int verificar_qtd_livros();
 
 //Main
@@ -300,18 +301,34 @@ void aloca_livro(livro **p){
 
 //Cadastro do livro.
 void cadastro_livro(livro *p){
-    int f, num_reg_livro=(verificar_qtd_livros()+1000);
+    int f, num_reg_livro, pos_livro,check = 0;
 
-    p->reg=num_reg_livro;
-    printf("\nRegistro do livro: %i",p->reg);
+    pos_livro = verificar_vago_livro(p);
 
-    printf("\nInforme o nome do livro: ");
-    gets(p->titulo);
-    fflush(stdin);
+    if(pos_livro != -1){
+        printf("\nInforme o nome do livro: ");
+        gets(p->titulo);
+        fflush(stdin);
 
-    printf("Informe o nome do autor: ");
-    gets(p->autor);
-    fflush(stdin);
+        printf("Informe o nome do autor: ");
+        gets(p->autor);
+        fflush(stdin);
+    }else{
+        num_reg_livro=(verificar_qtd_livros()+1000);
+
+        p->reg=num_reg_livro;
+        printf("\nRegistro do livro: %i",p->reg);
+
+        printf("\nInforme o nome do livro: ");
+        gets(p->titulo);
+        fflush(stdin);
+
+        printf("Informe o nome do autor: ");
+        gets(p->autor);
+        fflush(stdin);
+
+        check = 1;
+    }
 
     for(f=0; f<2; f++){
         (p->status+f)->sigla='L';
@@ -322,10 +339,42 @@ void cadastro_livro(livro *p){
         (p->status+f)->dia_dev=-1;
     }
 
+
     printf("\n");
     system("PAUSE");
 
-    escrever_arquivo_livros(p);
+    if(check == 1){
+        escrever_arquivo_livros(p);
+    }
+
+    if(check == 0){
+        atualizar_livro(p, pos_livro);
+    }
+    
+}
+
+int verificar_vago_livro(livro *pLivro){
+    FILE *arquivo = NULL;
+    int cc, check = -1, qtd_livros = verificar_qtd_livros();
+
+    if((arquivo = fopen("livros.bin","rb")) == NULL){
+        printf("\nErro ao abrir o arquivo de livros (Busca pelo lugar vago)\n\n");
+    }else{
+
+        for(cc = 0; cc < qtd_livros; cc++){
+            fseek(arquivo,cc*sizeof(livro),0);
+            fread(pLivro,sizeof(livro),1,arquivo);
+
+            if(strcmp(pLivro->titulo, "@") == 0){     
+                check = cc;   
+                break;
+            }
+            
+        }
+
+        fclose(arquivo);
+        return check;
+    }
 }
 
 //Escrever no arquivo de livros.
