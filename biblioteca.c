@@ -77,8 +77,11 @@ void cadastro_livro(livro *p);
 void escrever_arquivo_livros(livro *p);
 void consulta_livro(livro *p, int opc);
 void printar_livro(livro *p);
+void excluir_livro(livro *pLivro, aluno *pAluno);
+int mostrar_titulo(livro *pLivro, char *auxTitulo);
 int buscar_status(livro *p, char status_colocado);
 int buscar_titulo(livro *p, char *titulo_colocado);
+int buscar_reg(livro *p, int auxReg);
 int atualizar_livro(livro *pTitulo,int posicao_titulo);
 int verificar_reservas(livro *p);
 int verificar_qtd_livros();
@@ -122,6 +125,10 @@ main(){
                 break;
             case 9:
                 devolucao_livro(estudante, book);
+                break;
+            case 10:
+                excluir_livro(book, estudante);
+                break;
         }
     }while(opc != 0);
 }
@@ -132,45 +139,48 @@ main(){
 void printar_livro(livro *p){
     int f;
 
-    printf("\nRegistro: %i",p->reg);
-    printf("\n\tTitulo: %s",p->titulo);
-    printf("\n\tAutor: %s\n",p->autor);
+    if(strcmp(p->titulo, "@") != 0){
+        printf("\nRegistro: %i",p->reg);
+        printf("\n\tTitulo: %s",p->titulo);
+        printf("\n\tAutor: %s\n",p->autor);
 
-    for(f=0; f<2; f++){
-        printf("\n\t%i\xA7 Status: ",f+1);
+        for(f=0; f<2; f++){
+            printf("\n\t%i\xA7 Status: ",f+1);
 
-        if((p->status+f)->sigla == 'L'){
-            printf("Disponivel");
-        }else{
-            if((p->status+f)->sigla == 'E'){
-                printf("Emprestado");
-                printf("\n\t\tRA: %s",(p->status+f)->RA);
-
-                if((p->status+f)->dia_ret == -1){
-                    printf("\n\t\tRetirado: ---");
-                    printf("\n\t\tDevolucao: ---");
-                }else{
-                    printf("\n\t\tRetirado: %i/%i",(p->status+f)->dia_ret,(p->status+f)->mes_ret);
-                    printf("\n\t\tDevolucao: %i/%i",(p->status+f)->dia_dev,(p->status+f)->mes_dev);
-                }
+            if((p->status+f)->sigla == 'L'){
+                printf("Disponivel");
             }else{
-                printf("Reservado");
+                if((p->status+f)->sigla == 'E'){
+                    printf("Emprestado");
+                    printf("\n\t\tRA: %s",(p->status+f)->RA);
 
-                printf("\n\t\tRA: %s",(p->status+f)->RA);
-                
-                if((p->status+f)->dia_ret == -1){
-                    printf("\n\t\tRetirado: ---");
-                    printf("\n\t\tDevolucao: ---");
+                    if((p->status+f)->dia_ret == -1){
+                        printf("\n\t\tRetirado: ---");
+                        printf("\n\t\tDevolucao: ---");
+                    }else{
+                        printf("\n\t\tRetirado: %i/%i",(p->status+f)->dia_ret,(p->status+f)->mes_ret);
+                        printf("\n\t\tDevolucao: %i/%i",(p->status+f)->dia_dev,(p->status+f)->mes_dev);
+                    }
                 }else{
-                    printf("\n\t\tEspera-se retirar em: %i/%i",(p->status+f)->dia_ret,(p->status+f)->mes_ret);
-                    printf("\n\t\tEspera-se devolver em: %i/%i",(p->status+f)->dia_dev,(p->status+f)->mes_dev);
-                }
-            }
-        
-        }
-    }
+                    printf("Reservado");
 
-    printf("\n-------------------------------------------\n");
+                    printf("\n\t\tRA: %s",(p->status+f)->RA);
+                    
+                    if((p->status+f)->dia_ret == -1){
+                        printf("\n\t\tRetirado: ---");
+                        printf("\n\t\tDevolucao: ---");
+                    }else{
+                        printf("\n\t\tEspera-se retirar em: %i/%i",(p->status+f)->dia_ret,(p->status+f)->mes_ret);
+                        printf("\n\t\tEspera-se devolver em: %i/%i",(p->status+f)->dia_dev,(p->status+f)->mes_dev);
+                    }
+                }
+            
+            }
+        }
+
+        printf("\n-------------------------------------------\n");
+    }
+    
 }
 
 //Consulta de livros (Opc 5 - 6 - 7)
@@ -265,7 +275,7 @@ int buscar_status(livro *p, char status_colocado){
             for(f=0; f<2; f++){
                 if((p->status+f)->sigla == toupper(status_colocado)){     
                     printar_livro(p);
-                    check = 1;   /// SUSPEEEEITO  --> CHECK = CC ?
+                    check = cc;   
                     break;
                 }
             }
@@ -377,6 +387,152 @@ int verificar_reservas(livro *p){
 
     return 1;
     
+}
+
+//Deletar livro
+void excluir_livro(livro *pLivro, aluno *pAluno){
+    char auxTitulo[80];
+    int auxReg, verificar_reg,cc,check = 0, posicao_ra;
+
+    do{
+        system("cls");
+        printf("\nTitulo do livro a ser deletado: ");
+        gets(auxTitulo);
+    }while(mostrar_titulo(pLivro, auxTitulo) == 0);
+
+    printf("\nEscolha o numero do registro que deseja: ");
+    scanf("%i",&auxReg);
+    
+    verificar_reg = buscar_reg(pLivro, auxReg);
+
+    if(verificar_reg == -1){
+        printf("\nRegistro invalido, retornando ao menu.");
+        system("PAUSE");
+        return;
+    }else{
+        if((pLivro->status+0)->sigla == 'E'){
+            (pLivro->status+0)->sigla = 'L';
+            printf("\nMulta para deletar o livro: RS 150.00\n\n");
+            system("PAUSE");
+
+            posicao_ra = buscar_ra(pAluno,(pLivro->status+0)->RA);
+
+            if(posicao_ra == -1){
+                printf("\nFalha ao obter o RA de emprestimo, retornando ao menu.");
+                system("PAUSE");
+                return;
+            }else{
+                //Aluno
+                for(cc = 0; cc<4; cc++){
+                    if((pAluno->tabela+cc)->reg == pLivro->reg){
+                        (pAluno->tabela+cc)->sigla = 'L';
+                        (pAluno->tabela+cc)->reg = -1;
+                        break;
+                    }
+                }
+                pAluno->emprestado--;
+
+                check=1;
+            }
+        }
+
+        if((pLivro->status+1)->sigla == 'R'){
+            posicao_ra = buscar_ra(pAluno,(pLivro->status+1)->RA);
+
+            if(posicao_ra == -1){
+                printf("\nFalha ao obter o RA de reserva, retornando ao menu.");
+                system("PAUSE");
+                return;
+            }else{
+                //Aluno
+                for(cc = 0; cc<4; cc++){
+                    if((pAluno->tabela+cc)->reg == pLivro->reg){
+                        (pAluno->tabela+cc)->sigla = 'L';
+                        (pAluno->tabela+cc)->reg = -1;
+                        break;
+                    }
+                }
+                pAluno->reservado--;
+
+                check=1;
+            }
+            
+        }
+
+        if(check == 0){
+            strcpy(pLivro->titulo, "@");
+        }
+
+        atualizar_livro(pLivro,verificar_reg);
+        atualizar_aluno(pLivro,posicao_ra);
+    }
+
+   
+}
+
+//Mostrar os livros com titulo iguais
+int mostrar_titulo(livro *pLivro, char *auxTitulo){
+    int cc, qtdLivros = verificar_qtd_livros(), check = 0;
+    FILE *arquivo = NULL;
+
+    if((arquivo = fopen("livros.bin","rb")) == NULL){
+        printf("\nErro ao abrir o arquivo de livros (Mostrar titulos)\n\n");
+        exit(1);
+    }else{
+
+        for(cc = 0; cc < qtdLivros; cc++){
+            fseek(arquivo,cc*sizeof(livro),0);
+            fread(pLivro,sizeof(livro),1,arquivo);
+
+            if(strcmp(pLivro->titulo,auxTitulo) == 0){
+                printf("\nTitulo: %s",pLivro->titulo);
+                printf("\nRegistro: %i\n\n",pLivro->reg);
+                check = 1;
+            }
+        }
+
+        fclose(arquivo);
+    }
+
+    if(check != 1){
+        printf("\nTitulo invalido, verifique novamente.\n\n");
+        system("PAUSE");
+        return 0;
+    }else{
+        printf("\n");
+        system("PAUSE");
+        return 1;
+    }
+
+}
+
+//Busca o livro pelo registro
+int buscar_reg(livro *p, int auxReg){
+    FILE *arquivo = NULL;
+    int cc, check = -1, qtd_livros = verificar_qtd_livros();
+
+    if((arquivo = fopen("livros.bin","rb")) == NULL){
+        printf("\nErro ao abrir o arquivo de livros (Busca pelo registro)\n\n");
+    }else{
+
+        for(cc = 0; cc < qtd_livros; cc++){
+            fseek(arquivo,cc*sizeof(livro),0);
+            fread(p,sizeof(livro),1,arquivo);
+
+            if(p->reg == auxReg){     
+                check = cc;   
+                break;
+            }
+            
+        }
+
+        if (check == -1){
+            printf("\nRegistro Invalido. Tente novamente!\n");
+        }
+
+        fclose(arquivo);
+        return check;
+    }
 }
 
 //---------FIM -> FUNCOES LIVRO---------
@@ -645,12 +801,6 @@ void devolucao_livro(aluno *pAluno, livro *pLivro){
             strcpy(auxRa,(pLivro->status+1)->RA);
 
             posicao_ra = buscar_ra(pAluno,auxRa);
-
-            if(posicao_ra == -1){
-                printf("\nRA Invalido. Tente novamente!\n");
-                system("PAUSE");
-                return;
-            }
 
             if(pAluno->emprestado < 3 || pAluno->reservado < 1){
                 emprestimo_pos_devolucao(pAluno, pLivro, auxDia, auxMes);
@@ -962,6 +1112,10 @@ void printar_menu(){
 
     printf("\n<8> Emprestimo / Reserva");
     printf("\n<9> Devolucao");
+
+    printf("\n--------------------");
+
+    printf("\n<10> Deletar livro");
 
     printf("\n--------------------");
 
