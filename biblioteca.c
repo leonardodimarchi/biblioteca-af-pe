@@ -487,7 +487,7 @@ void excluir_livro(livro *pLivro, aluno *pAluno){
                 }
                 pAluno->emprestado--;
 
-                atualizar_aluno(pLivro,posicao_ra);
+                atualizar_aluno(pAluno,posicao_ra);
             }
         }
 
@@ -511,7 +511,7 @@ void excluir_livro(livro *pLivro, aluno *pAluno){
                 }
                 pAluno->reservado--;
 
-                atualizar_aluno(pLivro,posicao_ra);
+                atualizar_aluno(pAluno,posicao_ra);
             }
             
         }
