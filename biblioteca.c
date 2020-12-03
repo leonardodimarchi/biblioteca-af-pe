@@ -445,7 +445,7 @@ int verificar_reservas(livro *p){
 //Deletar livro
 void excluir_livro(livro *pLivro, aluno *pAluno){
     char auxTitulo[80];
-    int auxReg, verificar_reg,cc, posicao_ra,check = 0;
+    int auxReg, verificar_reg,cc, posicao_ra;
 
     do{
         system("cls");
@@ -485,11 +485,13 @@ void excluir_livro(livro *pLivro, aluno *pAluno){
                 }
                 pAluno->emprestado--;
 
-                check = 1;
+                atualizar_aluno(pLivro,posicao_ra);
             }
         }
 
         if((pLivro->status+1)->sigla == 'R'){
+            (pLivro->status+1)->sigla = 'L';
+        
             posicao_ra = buscar_ra(pAluno,(pLivro->status+1)->RA);
 
             if(posicao_ra == -1){
@@ -507,17 +509,14 @@ void excluir_livro(livro *pLivro, aluno *pAluno){
                 }
                 pAluno->reservado--;
 
-                check = 1;
+                atualizar_aluno(pLivro,posicao_ra);
             }
             
         }
 
         strcpy(pLivro->titulo, "@");
 
-        if(check != 1){
-            atualizar_livro(pLivro,verificar_reg);
-            atualizar_aluno(pLivro,posicao_ra);
-        }
+        atualizar_livro(pLivro,verificar_reg);
         
     }
 
