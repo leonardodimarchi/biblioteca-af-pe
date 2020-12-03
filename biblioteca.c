@@ -451,10 +451,12 @@ void excluir_livro(livro *pLivro, aluno *pAluno){
         system("cls");
         printf("\nTitulo do livro a ser deletado: ");
         gets(auxTitulo);
+        fflush(stdin);
     }while(mostrar_titulo(pLivro, auxTitulo) == 0);
 
     printf("\nEscolha o numero do registro que deseja: ");
     scanf("%i",&auxReg);
+    fflush(stdin);
     
     verificar_reg = buscar_reg(pLivro, auxReg);
 
