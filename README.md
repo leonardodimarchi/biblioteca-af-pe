@@ -1,2 +1,4 @@
 # AF-PE Biblioteca
- AF de programação estruturada
+ Avaliação Final de programação estruturada (2º Semestre)
+
+Programa que utiliza conceitos de estrutura, alocação dinâmica, ponteiros e escrita/leitura de arquivos binarios em C
